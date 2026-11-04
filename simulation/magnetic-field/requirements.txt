@@ -1,0 +1,5 @@
+# Python >=3.12. Faixas para a fase inicial; revisar ao implementar modelos.
+magpylib>=6.1,<7
+numpy>=2.4,<2.6
+scipy>=1.18,<2
+matplotlib>=3.11,<4

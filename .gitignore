@@ -1,0 +1,39 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# IDE e sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Arduino e ESP32: saídas de build locais
+.pio/
+arduino_build_*/
+*.elf
+*.hex
+*.map
+
+# Arquivos temporários e segredos locais
+*.tmp
+*.bak
+.env
+.env.*
+!.env.example
