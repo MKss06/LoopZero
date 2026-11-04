@@ -27,8 +27,9 @@ Python, Magpylib, NumPy, SciPy e Matplotlib para modelagem e análise; Arduino U
 | `control/` | Bobinas, atuação e algoritmos de controle. |
 | `digital-twin/` | Integração futura de backend e frontend. |
 | `hardware/` | Esquemas, CAD e componentes. |
-| `data/experiments/` | Medições brutas, preservadas na forma original. |
+| `data/experiments/` | Arquivos experimentais recebidos, preservados com notas de proveniência. |
 | `data/processed/` | Dados derivados e rastreáveis. |
+| `data/magnets/` | Dimensões individuais dos dez ímãs e sua proveniência. |
 | `docs/` | Metodologia, protocolos, arquitetura e referências. |
 | `tests/` | Testes de integração entre módulos, quando existirem. |
 
@@ -50,4 +51,4 @@ Em Linux/macOS, substitua a ativação por `source .venv/bin/activate` e crie o 
 
 ## Estado e próximos passos
 
-O repositório está na fase de organização inicial. As próximas tarefas são formalizar protocolos e parâmetros, registrar os arquivos originais de medição, definir interfaces entre módulos e implementar modelos e testes à medida que as hipóteses forem especificadas. Não há licença definida; a decisão cabe aos responsáveis pelo projeto.
+O repositório está na fase inicial. O módulo de campo magnético contém as dimensões médias, a montagem geométrica e uma [comparação horizontal em volts com Magpylib](data/processed/hall-sensor/comparacao-horizontal.md), ainda dependente de hipóteses não calibradas. A [análise de sensibilidade](data/processed/hall-sensor/sensibilidade-geometrica-horizontal.md) explora altura relativa e deslocamento do zero. A planilha Hall recebida está preservada em `data/experiments/hall-sensor/`; sua [análise reproduzível das tensões medidas](data/processed/hall-sensor/resumo.md), inclusive em 0 mm nominal, está em `data/processed/hall-sensor/`. As próximas tarefas são formalizar parâmetros e calibração, confirmar a geometria da coleta e definir interfaces entre módulos. Não há licença definida; a decisão cabe aos responsáveis pelo projeto.

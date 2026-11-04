@@ -16,5 +16,6 @@
 *.jpg binary
 *.jpeg binary
 *.pdf binary
+*.xlsx binary
 # Preservar os bytes de arquivos de medição originais.
 data/experiments/** -text

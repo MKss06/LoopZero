@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="415" viewBox="0 0 980 415">
+<style>text{font:17px sans-serif;fill:#1b2430}.small{font:14px sans-serif}.surface{stroke:#666;stroke-width:4}.arrow{stroke:#087e8b;stroke-width:4;marker-end:url(#head)}.magnet{fill:#dbe8f5;stroke:#174b75;stroke-width:3}.hall{fill:#202734}</style>
+<defs><marker id="head" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L9 3 L0 6 Z" fill="#087e8b"/></marker></defs>
+<text x="30" y="30">Corte X–Z: esquema condicional, não fotografia nem cotas medidas</text>
+<line class="surface" x1="35" y1="305" x2="945" y2="305"/><text x="750" y="332">superfície: Z = 0</text>
+<rect class="hall" x="184" y="243" width="14" height="37"/><text x="47" y="180">Hall fixo</text><text x="35" y="201" class="small">elemento preto</text>
+<rect class="magnet" x="585" y="220" width="240" height="85"/><text x="648" y="264">ímã, lado 1</text>
+<line class="arrow" x1="566" y1="252" x2="260" y2="252"/><text x="360" y="235">50 → 0 mm, −X</text>
+<line class="arrow" x1="85" y1="285" x2="150" y2="285"/><text x="75" y="270">+X</text>
+<line class="arrow" x1="85" y1="285" x2="85" y2="210"/><text x="94" y="220">+Z</text>
+<text x="435" y="354" class="small">+Y: comprimento horizontal, perpendicular a esta vista</text>
+<text x="535" y="92">lado 2: giro de 180° em torno de Y / comprimento</text>
+<path d="M665 110 C765 85 830 120 810 168" fill="none" class="arrow"/>
+<text x="29" y="383" class="small">Altura do Hall, zero físico e eixo sensível: hipóteses; polarização local +Z gira com a peça.</text>
+</svg>
