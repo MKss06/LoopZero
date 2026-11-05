@@ -1,6 +1,6 @@
 # Sensibilidade geométrica do modelo Hall horizontal
 
-Fonte: `data/experiments/hall-sensor/loopzero_hall_tensao_distancia.xlsx` (SHA-256 `d536ed2305b905a90187ce3de6868d18bbe4fc173b43d43379bd4288e16b4958`). As **904 leituras** foram reagregadas e conferidas com a aba `Comparação`. A planilha e os resultados anteriores não foram alterados. A [montagem horizontal](comparacao-horizontal.md) define a peça, a virada rígida e a projeção candidata **vertical_z** usada aqui; o eixo sensível real não foi medido.
+Fonte: `data/experiments/hall-sensor/loopzero_hall_tensao_distancia.xlsx` (SHA-256 `d536ed2305b905a90187ce3de6868d18bbe4fc173b43d43379bd4288e16b4958`). As **904 leituras** foram reagregadas e conferidas com a aba `Comparação`. A planilha original foi preservada; as colunas anteriores dos resultados foram mantidas. A [montagem horizontal](comparacao-horizontal.md) define a peça, a virada rígida e a projeção candidata **vertical_z** usada aqui; o eixo sensível real não foi medido.
 
 ## Parâmetros e convenções
 
@@ -40,44 +40,44 @@ O contorno laranja do mapa separa cenários que extrapolam 0 mm dentro ou fora d
 | cenário anterior | +0.00 | 0.00 | 0.016570 |
 | melhor com 0–5 V | +2.00 | 3.50 | 0.025813 |
 
-A tabela abaixo traz **observado, previsto e resíduo por lado e distância** para o menor RMSE. A tabela CSV de resíduos contém os mesmos valores para todos os cenários representativos. Resíduo = observado − previsto, em volts.
+A tabela abaixo traz **observado, previsto e resíduo por lado e distância** para o menor RMSE. A tabela CSV de resíduos contém os mesmos valores para todos os cenários representativos. Resíduo = observado − previsto, em volts. A coluna adicional de campo usa ΔV (mV)/14: **14 mV/mT é a sensibilidade típica do SS49E Honeywell identificado pelo experimentador no kit Elegoo; a unidade não foi calibrada individualmente**. É estimativa, não campo medido por instrumento calibrado. As curvas e resíduos originais continuam em V.
 
-| Lado | d (mm) | ΔV observado (V) | ΔV previsto (V) | Resíduo (V) |
-| --- | ---: | ---: | ---: | ---: |
-| Lado 1 | 5 | +0.774637 | +0.777585 | -0.002948 |
-| Lado 1 | 10 | +0.263223 | +0.267626 | -0.004403 |
-| Lado 1 | 15 | +0.121090 | +0.121567 | -0.000477 |
-| Lado 1 | 20 | +0.083012 | +0.064972 | +0.018040 |
-| Lado 1 | 30 | +0.024182 | +0.024824 | -0.000642 |
-| Lado 1 | 40 | +0.014387 | +0.011980 | +0.002407 |
-| Lado 1 | 50 | +0.008604 | +0.006666 | +0.001937 |
-| Lado 2 | 5 | -0.781652 | -0.777585 | -0.004067 |
-| Lado 2 | 10 | -0.263278 | -0.267626 | +0.004348 |
-| Lado 2 | 15 | -0.118250 | -0.121567 | +0.003317 |
-| Lado 2 | 20 | -0.072564 | -0.064972 | -0.007592 |
-| Lado 2 | 30 | -0.029045 | -0.024824 | -0.004221 |
-| Lado 2 | 40 | -0.019282 | -0.011980 | -0.007302 |
-| Lado 2 | 50 | -0.014101 | -0.006666 | -0.007435 |
+| Lado | d (mm) | ΔV observado (V) | ΔV previsto (V) | Resíduo (V) | Campo estimado (mT; SS49E típico, não calibrado) |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Lado 1 | 5 | +0.774637 | +0.777585 | -0.002948 | +55.331 |
+| Lado 1 | 10 | +0.263223 | +0.267626 | -0.004403 | +18.802 |
+| Lado 1 | 15 | +0.121090 | +0.121567 | -0.000477 | +8.649 |
+| Lado 1 | 20 | +0.083012 | +0.064972 | +0.018040 | +5.929 |
+| Lado 1 | 30 | +0.024182 | +0.024824 | -0.000642 | +1.727 |
+| Lado 1 | 40 | +0.014387 | +0.011980 | +0.002407 | +1.028 |
+| Lado 1 | 50 | +0.008604 | +0.006666 | +0.001937 | +0.615 |
+| Lado 2 | 5 | -0.781652 | -0.777585 | -0.004067 | -55.832 |
+| Lado 2 | 10 | -0.263278 | -0.267626 | +0.004348 | -18.806 |
+| Lado 2 | 15 | -0.118250 | -0.121567 | +0.003317 | -8.446 |
+| Lado 2 | 20 | -0.072564 | -0.064972 | -0.007592 | -5.183 |
+| Lado 2 | 30 | -0.029045 | -0.024824 | -0.004221 | -2.075 |
+| Lado 2 | 40 | -0.019282 | -0.011980 | -0.007302 | -1.377 |
+| Lado 2 | 50 | -0.014101 | -0.006666 | -0.007435 | -1.007 |
 
 ## 0 mm nominal: tensão medida e extrapolação calculada
 
-Os valores de ΔV observado em 0 mm são **medições reais** da planilha; não são previsões fornecidas pelo experimentador. Somente os valores calculados pelo modelo nesse ponto são extrapolações fora do ajuste. O cálculo soma o ΔV do modelo à **referência sem ímã do mesmo lado** para obter a tensão total prevista. A faixa **0–5 V** é o limite nominal de leitura ADC inferido da conversão das leituras (aproximadamente `ADC × 5/1023`), **não** uma especificação confirmada de saída linear do AH49E. A alimentação e a faixa válida do sensor ainda precisam ser verificadas.
+Os valores de ΔV observado em 0 mm são **medições reais** da planilha; não são previsões fornecidas pelo experimentador. Somente os valores calculados pelo modelo nesse ponto são extrapolações fora do ajuste. O cálculo soma o ΔV do modelo à **referência sem ímã do mesmo lado** para obter a tensão total prevista. A faixa **0–5 V** é o limite nominal de leitura ADC inferido da conversão das leituras (aproximadamente `ADC × 5/1023`), **não** uma especificação confirmada de saída linear do SS49E. A alimentação e a faixa válida do sensor ainda precisam ser verificadas.
 
-| Cenário | Lado | ΔV medido (V) | ΔV calculado (V) | Saída calculada (V) | Dentro de 0–5 V? |
-| --- | --- | ---: | ---: | ---: | --- |
-| melhor na grade | Lado 1 | +1.671804 | +4.043316 | 6.648512 | não |
-| melhor na grade | Lado 2 | -1.501611 | -4.043316 | -1.428770 | não |
-| alternativa próxima | Lado 1 | +1.671804 | +4.130223 | 6.735419 | não |
-| alternativa próxima | Lado 2 | -1.501611 | -4.130223 | -1.515678 | não |
-| cenário anterior | Lado 1 | +1.671804 | +4.886921 | 7.492117 | não |
-| cenário anterior | Lado 2 | -1.501611 | -4.886921 | -2.272376 | não |
-| melhor com 0–5 V | Lado 1 | +1.671804 | +2.390405 | 4.995601 | sim |
-| melhor com 0–5 V | Lado 2 | -1.501611 | -2.390405 | 0.224140 | sim |
+| Cenário | Lado | ΔV medido (V) | Campo estimado (mT; SS49E típico, não calibrado) | ΔV calculado (V) | Saída calculada (V) | Dentro de 0–5 V? |
+| --- | --- | ---: | ---: | ---: | ---: | --- |
+| melhor na grade | Lado 1 | +1.671804 | +119.415 | +4.043316 | 6.648512 | não |
+| melhor na grade | Lado 2 | -1.501611 | -107.258 | -4.043316 | -1.428770 | não |
+| alternativa próxima | Lado 1 | +1.671804 | +119.415 | +4.130223 | 6.735419 | não |
+| alternativa próxima | Lado 2 | -1.501611 | -107.258 | -4.130223 | -1.515678 | não |
+| cenário anterior | Lado 1 | +1.671804 | +119.415 | +4.886921 | 7.492117 | não |
+| cenário anterior | Lado 2 | -1.501611 | -107.258 | -4.886921 | -2.272376 | não |
+| melhor com 0–5 V | Lado 1 | +1.671804 | +119.415 | +2.390405 | 4.995601 | sim |
+| melhor com 0–5 V | Lado 2 | -1.501611 | -107.258 | -2.390405 | 0.224140 | sim |
 
 Em toda a grade, **102/425 cenários** preveem, em 0 mm, tensão dentro de 0–5 V nos dois lados. Entre os 33 cenários até 10% do menor RMSE, **0** passam nessa checagem. O menor RMSE entre os cenários que passam é **0.025813 V**. Esse teste de plausibilidade elétrica não usa 0 mm para ajustar parâmetros e não calibra o sensor. O 0 nominal não é a distância confirmada até o elemento sensível. O cenário de menor RMSE nas 14 médias extrapola para fora de 0–5 V nos dois lados; portanto, seu bom ajuste naquela faixa não valida a resposta elétrica em 0 mm.
 
 ## Conclusões sob variação geométrica
 
-A aproximação horizontal, o Hall fixo e a inversão de sinal entre lados continuam representados em toda a grade. A forma da curva em ΔV pode ser semelhante para várias combinações de altura relativa e deslocamento; o fator efetivo também muda. Assim, um menor RMSE de grade **não mede** altura, zero, magnetização ou sensibilidade elétrica. O eixo vertical de leitura e a magnetização pela espessura permanecem hipóteses. ΔV não foi convertido para mT. A identidade dos polos e do ímã ensaiado permanece desconhecida.
+A aproximação horizontal, o Hall fixo e a inversão de sinal entre lados continuam representados em toda a grade. A forma da curva em ΔV pode ser semelhante para várias combinações de altura relativa e deslocamento; o fator efetivo também muda. Assim, um menor RMSE de grade **não mede** altura, zero, magnetização ou sensibilidade elétrica. O eixo vertical de leitura e a magnetização pela espessura permanecem hipóteses. A conversão adicional para mT usa apenas sensibilidade típica assumida, sem calibrar o Hall. A identidade dos polos e do ímã ensaiado permanece desconhecida.
 
 Versões: Python 3.13.17, Magpylib 6.1.0, SciPy 1.18.1. Da raiz do repositório: `.\.venv\Scripts\python.exe simulation/magnetic-field/src/hall_geometry_sensitivity.py`.

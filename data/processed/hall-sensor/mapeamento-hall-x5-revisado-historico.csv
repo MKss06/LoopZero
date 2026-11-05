@@ -1,0 +1,13 @@
+lado,x_nominal_mm,y_nominal_mm,estado,arquivo_fonte,n,media_adc,referencia_aplicada_adc,tensao_media_v,delta_v_medido_v,campo_estimado_mt_ss49e_tipico_sem_calibracao_individual,residuo_escala_fixa_v
+Lado 1,5,-10,substituido,mapeamento_hall_grade.xlsx,46,556.130434783,533.783333333,2.718135067,0.109223370,7.801669267,-0.348631739
+Lado 1,5,-10,vigente_reteste,mapeamento_hall_grade_revisado_x5.xlsx,43,597.139534884,534.344827586,2.918570552,0.306914503,21.922464494,-0.150940606
+Lado 1,5,0,substituido,mapeamento_hall_grade.xlsx,38,638.052631579,533.783333333,3.118536811,0.509625114,36.401793830,-0.280135898
+Lado 1,5,0,vigente_reteste,mapeamento_hall_grade_revisado_x5.xlsx,40,693.600000000,534.344827586,3.390029326,0.778373277,55.598091193,-0.011387735
+Lado 1,5,10,substituido,mapeamento_hall_grade.xlsx,38,579.973684211,533.783333333,2.834670988,0.225759291,16.125663621,-0.232095818
+Lado 1,5,10,vigente_reteste,mapeamento_hall_grade_revisado_x5.xlsx,26,597.230769231,534.344827586,2.919016467,0.307360419,21.954315614,-0.150494690
+Lado 2,5,-10,substituido,mapeamento_hall_grade.xlsx,49,504.000000000,533.973739496,2.463343109,-0.146499216,-10.464229680,0.311355893
+Lado 2,5,-10,vigente_reteste,mapeamento_hall_grade_revisado_x5.xlsx,50,483.220000000,534.344827586,2.361779081,-0.249876968,-17.848354834,0.207978141
+Lado 2,5,0,substituido,mapeamento_hall_grade.xlsx,35,427.400000000,533.973739496,2.088954057,-0.520888267,-37.206304809,0.268872745
+Lado 2,5,0,vigente_reteste,mapeamento_hall_grade_revisado_x5.xlsx,28,401.714285714,534.344827586,1.963412931,-0.648243118,-46.303079832,0.141517894
+Lado 2,5,10,substituido,mapeamento_hall_grade.xlsx,30,483.033333333,533.973739496,2.360866732,-0.248975592,-17.783970871,0.208879517
+Lado 2,5,10,vigente_reteste,mapeamento_hall_grade_revisado_x5.xlsx,20,483.950000000,534.344827586,2.365347019,-0.246309030,-17.593502160,0.211546079

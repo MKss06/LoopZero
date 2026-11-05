@@ -18,7 +18,8 @@ import numpy as np
 import scipy
 
 from compare_hall_mountings import mounting_setup, template
-from hall_analysis import OUTPUT, ROOT, SOURCE, Result, _workbook_sheets, calculate, load_readings, verify_comparison
+from hall_analysis import (FIELD_COLUMN, OUTPUT, ROOT, SOURCE, Result, _workbook_sheets,
+                           calculate, estimated_field_mt, load_readings, verify_comparison)
 from magnet_geometry import dimensions_for
 
 
@@ -29,7 +30,7 @@ STEM = "sensibilidade-geometrica-horizontal"
 HEIGHTS_RELATIVE_MM = tuple(float(x) for x in np.arange(-2.0, 2.0001, 0.25))
 OFFSETS_MM = tuple(float(x) for x in np.arange(0.0, 6.0001, 0.25))
 ADC_LOW_V = 0.0
-ADC_HIGH_V = 5.0  # limite de leitura nominal inferido, não especificação do AH49E
+ADC_HIGH_V = 5.0  # limite de leitura nominal inferido, não especificação do SS49E
 
 
 @dataclass(frozen=True)
@@ -212,14 +213,15 @@ def write_outputs(source: Path, output: Path, results: list[Result],
         writer = csv.writer(stream)
         writer.writerow(("cenario", "altura_relativa_mm", "deslocamento_mm", "lado",
                          "distancia_nominal_mm", "n", "usado_no_ajuste", "delta_v_observado_v",
-                         "delta_v_previsto_v", "residuo_v", "saida_prevista_v"))
+                         "delta_v_previsto_v", "residuo_v", "saida_prevista_v", FIELD_COLUMN))
         for label, scenario in representatives:
             for r in prediction_rows(results, scenario):
                 writer.writerow((label, f"{scenario.height_relative_mm:.3f}", f"{scenario.offset_mm:.3f}",
                                  r["side"], r["distance_mm"], r["count"],
                                  "sim" if r["used_for_fit"] else "nao",
                                  *(f"{r[key]:.9f}" for key in
-                                   ("observed_v", "predicted_v", "residual_v", "output_predicted_v"))))
+                                   ("observed_v", "predicted_v", "residual_v", "output_predicted_v")),
+                                 f"{estimated_field_mt(r['observed_v'] * 1000):.9f}"))
     plot_heatmap(scenarios, heights, offsets, output / f"{STEM}-mapa.png")
     plot_curves(results, representatives, output / f"{STEM}-curvas.png")
     source_hash = hashlib.sha256(source.read_bytes()).hexdigest()
@@ -230,8 +232,9 @@ def write_outputs(source: Path, output: Path, results: list[Result],
     lines = [
         "# Sensibilidade geométrica do modelo Hall horizontal", "",
         f"Fonte: `{source_label}` (SHA-256 `{source_hash}`). As **904 leituras** foram "
-        "reagregadas e conferidas com a aba `Comparação`. A planilha e os "
-        "resultados anteriores não foram alterados. A [montagem horizontal](comparacao-horizontal.md) "
+        "reagregadas e conferidas com a aba `Comparação`. A planilha original "
+        "foi preservada; as colunas anteriores dos resultados foram mantidas. "
+        "A [montagem horizontal](comparacao-horizontal.md) "
         "define a peça, a virada rígida e a projeção candidata **vertical_z** "
         "usada aqui; o eixo sensível real não foi medido.", "",
         "## Parâmetros e convenções", "",
@@ -286,13 +289,19 @@ def write_outputs(source: Path, output: Path, results: list[Result],
     lines += ["", "A tabela abaixo traz **observado, previsto e resíduo por lado e "
               "distância** para o menor RMSE. A tabela CSV de resíduos contém "
               "os mesmos valores para todos os cenários representativos. "
-              "Resíduo = observado − previsto, em volts.", "",
-              "| Lado | d (mm) | ΔV observado (V) | ΔV previsto (V) | Resíduo (V) |",
-              "| --- | ---: | ---: | ---: | ---: |"]
+              "Resíduo = observado − previsto, em volts. A coluna adicional "
+              "de campo usa ΔV (mV)/14: **14 mV/mT é sensibilidade típica "
+              "adotada do SS49E Honeywell identificado pelo experimentador "
+              "no kit Elegoo; a unidade não foi calibrada individualmente**. "
+              "É estimativa, não campo medido por instrumento "
+              "calibrado. As curvas e resíduos originais continuam em V.", "",
+              "| Lado | d (mm) | ΔV observado (V) | ΔV previsto (V) | Resíduo (V) | Campo estimado (mT; SS49E típico, não calibrado) |",
+              "| --- | ---: | ---: | ---: | ---: | ---: |"]
     for r in prediction_rows(results, best):
         if r["used_for_fit"]:
             lines.append(f"| {r['side']} | {r['distance_mm']} | {r['observed_v']:+.6f} | "
-                         f"{r['predicted_v']:+.6f} | {r['residual_v']:+.6f} |")
+                         f"{r['predicted_v']:+.6f} | {r['residual_v']:+.6f} | "
+                         f"{estimated_field_mt(r['observed_v'] * 1000):+.3f} |")
     lines += ["", "## 0 mm nominal: tensão medida e extrapolação calculada", "",
               "Os valores de ΔV observado em 0 mm são **medições reais** da "
               "planilha; não são previsões fornecidas pelo experimentador. "
@@ -302,16 +311,17 @@ def write_outputs(source: Path, output: Path, results: list[Result],
               "para obter a tensão total prevista. A faixa **0–5 V** é o limite "
               "nominal de leitura ADC inferido da conversão das leituras "
               "(aproximadamente `ADC × 5/1023`), **não** uma especificação "
-              "confirmada de saída linear do AH49E. A alimentação e a faixa "
+              "confirmada de saída linear do SS49E. A alimentação e a faixa "
               "válida do sensor ainda precisam ser verificadas.", "",
-              "| Cenário | Lado | ΔV medido (V) | ΔV calculado (V) | Saída calculada (V) | Dentro de 0–5 V? |",
-              "| --- | --- | ---: | ---: | ---: | --- |"]
+              "| Cenário | Lado | ΔV medido (V) | Campo estimado (mT; SS49E típico, não calibrado) | ΔV calculado (V) | Saída calculada (V) | Dentro de 0–5 V? |",
+              "| --- | --- | ---: | ---: | ---: | ---: | --- |"]
     zero_observed = {r.side: r.delta_v_mv / 1000 for r in results if r.distance_mm == 0}
     for label, s in representatives:
         for side in SIDES:
             value = s.zero_output_v[side]
             in_range = ADC_LOW_V <= value <= ADC_HIGH_V
             lines.append(f"| {label} | {side} | {zero_observed[side]:+.6f} | "
+                         f"{estimated_field_mt(zero_observed[side] * 1000):+.3f} | "
                          f"{s.zero_delta_v[side]:+.6f} | {value:.6f} | "
                          f"{'sim' if in_range else 'não'} |")
     count_in_range = sum(s.zero_within_adc_range for s in scenarios)
@@ -338,7 +348,8 @@ def write_outputs(source: Path, output: Path, results: list[Result],
               "muda. Assim, um menor RMSE de grade **não mede** altura, zero, "
               "magnetização ou sensibilidade elétrica. O eixo vertical de "
               "leitura e a magnetização pela espessura permanecem hipóteses. "
-              "ΔV não foi convertido para mT. A identidade dos polos e do "
+              "A conversão adicional para mT usa apenas sensibilidade típica "
+              "assumida, sem calibrar o Hall. A identidade dos polos e do "
               "ímã ensaiado permanece desconhecida.", "",
               f"Versões: Python {sys.version.split()[0]}, Magpylib {magpy.__version__}, "
               f"SciPy {scipy.__version__}. Da raiz do repositório: "

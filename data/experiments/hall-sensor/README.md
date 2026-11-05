@@ -1,4 +1,4 @@
-# Experimento com sensor Hall 49E
+# Experimentos com sensor Hall Honeywell SS49E
 
 O experimento inicial usa um sensor Hall 49E conectado ao Arduino UNO para observar a saída analógica em função da distância nominal em duas orientações do mesmo ímã de neodímio. As distâncias informadas são **0, 5, 10, 15, 20, 30, 40 e 50 mm**.
 
@@ -10,11 +10,27 @@ A aba **Leituras** contém **904 linhas válidas**: 831 com ímã nas oito dist�
 
 A [análise reproduzível](../../processed/hall-sensor/resumo.md) e suas curvas ficam em `data/processed/hall-sensor/`. O script lê esta planilha sem alterá-la e verifica todos os valores agregados contra `Comparação`.
 
-Uma [comparação horizontal com Magpylib](../../processed/hall-sensor/comparacao-horizontal.md) usa ΔV em volts. As leituras em **0 mm nominal são medições reais**; somente as tensões calculadas pelo modelo nesse ponto ficam fora do ajuste de 5–50 mm. O modelo não fornece magnetização medida nem campo calibrado em mT.
+## Grade de 30 posições
+
+[`mapeamento_hall_grade.xlsx`](mapeamento_hall_grade.xlsx) é a cópia **sem alterações** da nova planilha fornecida (SHA-256 `9e319d3dd6cabaebb6a08f1ae7852fb8427609e24e9cdfd82415135228cfb83f`). Ela contém **30 posições**: dois lados, X nominal de 5, 10, 20, 30 e 50 mm, e Y nominal de −10, 0 e +10 mm. A aba `Médias por posição` registra contagem e média ADC de cada bloco serial, totalizando **1.342 amostras com ímã resumidas**, mais **126 amostras de referência resumidas** em blocos de início e fim. As leituras seriais individuais não estão na planilha; não é possível conferir cada média a partir delas.
+
+A referência aplicada em cada lado é a média **não ponderada** das médias de início e fim. A tensão usa `ADC × 5/1023 V` com referência nominal de 5 V; ΔV usa a referência do lado, e a estimativa em mT usa 14 mV/mT típicos do SS49E, **sem calibração individual**. A [análise da grade](../../processed/hall-sensor/mapeamento-hall-horizontal.md) confere os valores das duas abas e compara os mapas com o cenário Magpylib horizontal anterior **sem novo ajuste**. X e Y são coordenadas nominais; a direção física e a origem de Y, a altura do Hall e o zero geométrico não foram verificados independentemente.
+
+A [análise exploratória dos resíduos e de uma escala comum](../../processed/hall-sensor/mapeamento-hall-escala-exploratoria.md) usa as mesmas 30 posições, mantém os parâmetros geométricos e preserva o resultado com a escala anterior.
+
+### Reteste de X=5 mm
+
+[`mapeamento_hall_grade_revisado_x5.xlsx`](mapeamento_hall_grade_revisado_x5.xlsx) é a **nova fonte vigente** para a grade (SHA-256 `bfb6452d861a87b4c51acc3a07377e46d3301aa26b65477821cd8ae61045ed71`). Sua aba `Reteste X5` guarda os **seis blocos corrigidos**, as contagens e médias anteriores e as frequências dos códigos ADC do reteste. Esses seis blocos **substituem** os valores X=5 da primeira planilha; os outros 24 pontos e a primeira planilha permanecem preservados para histórico. Em X=5, ambos os lados usam a referência própria do reteste, média simples das referências inicial e final (534,344828 ADC); em X≥10 persistem as referências anteriores por lado.
+
+O [relatório da revisão](../../processed/hall-sensor/mapeamento-hall-x5-revisado.md) apresenta os mapas vigentes, o histórico antes/depois e os resíduos com **escalas já publicadas, sem novo ajuste**. A grade vigente resume 1.313 amostras com ímã em 30 médias. As leituras seriais não têm ordem temporal na planilha.
+
+Uma [análise exploratória posterior](../../processed/hall-sensor/mapeamento-hall-x5-escala-exploratoria.md) ajusta apenas uma escala elétrica comum aos dois lados nas 30 médias vigentes. As métricas desse ajuste são internas ao mesmo conjunto.
+
+O [relatório consolidado](../../processed/hall-sensor/relatorio-consolidado.md) reúne a comparação horizontal com Magpylib em ΔV e a estimativa de campo por `ΔV (mV)/14`. As leituras em **0 mm nominal são medições reais**; somente os cálculos do modelo nesse ponto ficam fora do ajuste de 5–50 mm. O experimentador identificou o sensor como **Honeywell SS49E**, fornecido no kit Elegoo de 37 sensores. **14 mV/mT é a sensibilidade típica do fabricante; a unidade não foi calibrada individualmente.** O modelo não fornece magnetização medida nem campo calibrado.
 
 As notas da planilha esclarecem que **0 mm é uma posição nominal**, sem distância confirmada até o elemento sensível do Hall, e que no **lado 2 o ímã foi virado**. A planilha não informa data da coleta, identificação do ímã entre os dez medidos, calibração tensão-campo nem a geometria completa do elemento sensível. Não atribua essas informações por inferência.
 
-O esclarecimento posterior da montagem informa que o elemento Hall preto permaneceu fixo na ponta do módulo, voltado para o ímã; o ímã se moveu **horizontalmente** de 50 para 0 mm. No lado 2, a face antes apoiada na superfície ficou para cima. A face que ficou para cima não se tornou automaticamente a face de aproximação horizontal ao Hall. O [esquema e a comparação horizontal](../../processed/hall-sensor/comparacao-horizontal.md) usam essa descrição; a altura exata do elemento sensível e seu eixo de leitura permanecem pendentes. A associação “lado 1 = Sul; lado 2 = Norte” depende da resposta do AH49E e da orientação da face marcada e não constitui medição confirmada dos polos.
+O esclarecimento posterior da montagem informa que o elemento Hall preto permaneceu fixo na ponta do módulo, voltado para o ímã; o ímã se moveu **horizontalmente** de 50 para 0 mm. No lado 2, a face antes apoiada na superfície ficou para cima. A face que ficou para cima não se tornou automaticamente a face de aproximação horizontal ao Hall. O [esquema e a comparação horizontal](../../processed/hall-sensor/comparacao-horizontal.md) usam essa descrição; a altura exata do elemento sensível e seu eixo de leitura permanecem pendentes. **Lado 1 = Sul; lado 2 = Norte** é a atribuição adotada nesta análise segundo a convenção da face sensível da ficha Honeywell, sem verificação independente dos polos.
 
 Conforme o **esquema B** descrito para a montagem, o lado maior do ímã estava deitado e o movimento de aproximação era perpendicular ao sensor. Isso define uma relação de orientação e trajetória, não qual dimensão do cuboide coincide com a direção de aproximação. A identidade do ímã usado entre os dez da tabela é desconhecida. Também faltam a posição do elemento sensível, a distância geométrica correspondente a cada marca de medição e a magnetização do ímã.
 

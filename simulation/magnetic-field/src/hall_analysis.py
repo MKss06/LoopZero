@@ -1,4 +1,4 @@
-"""Reproduz a análise de tensão Hall da planilha recebida, sem inferir campo B."""
+"""Reproduz as tensões Hall e uma estimativa condicional de campo."""
 
 from __future__ import annotations
 
@@ -28,6 +28,13 @@ MAIN_NS = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
 REL_NS = "{http://schemas.openxmlformats.org/officeDocument/2006/relationships}"
 SIDES = ("Lado 1", "Lado 2")
 DISTANCES_MM = (0, 5, 10, 15, 20, 30, 40, 50)
+ASSUMED_SENSITIVITY_MV_PER_MT = 14.0  # SS49E Honeywell típico; chip Elegoo 49E não calibrado
+FIELD_COLUMN = "campo_estimado_mt_ss49e_tipico_14mv_por_mt_nao_calibrado"
+
+
+def estimated_field_mt(delta_v_mv: float) -> float:
+    """Conversão provisória de ΔV em mV, com sinal definido pela tensão."""
+    return delta_v_mv / ASSUMED_SENSITIVITY_MV_PER_MT
 
 
 @dataclass(frozen=True)
@@ -186,11 +193,11 @@ def write_outputs(
     output.mkdir(parents=True, exist_ok=True)
     with (output / "medias-por-distancia.csv").open("w", newline="", encoding="utf-8") as stream:
         writer = csv.writer(stream)
-        writer.writerow(("lado", "distancia_nominal_mm", "n", "tensao_media_v", "referencia_sem_ima_v", "delta_v_mv"))
+        writer.writerow(("lado", "distancia_nominal_mm", "n", "tensao_media_v", "referencia_sem_ima_v", "delta_v_mv", FIELD_COLUMN))
         for result in results:
             writer.writerow((result.side, result.distance_mm, result.count,
                              f"{result.mean_voltage_v:.12f}", f"{result.reference_voltage_v:.12f}",
-                             f"{result.delta_v_mv:.9f}"))
+                             f"{result.delta_v_mv:.9f}", f"{estimated_field_mt(result.delta_v_mv):.9f}"))
     _plot(results, output / "tensao-distancia.png", delta=False)
     _plot(results, output / "delta-v-distancia.png", delta=True)
     sha256 = hashlib.sha256(source.read_bytes()).hexdigest()
@@ -208,13 +215,22 @@ def write_outputs(
         f"Foram analisadas **{len(readings)} leituras**: 831 com ímã e 73 referências sem ímã. "
         "As médias, contagens e ΔV conferem com a aba `Comparação`.",
         "",
-        "| Lado | Referência sem ímã (V) | n referência | ΔV em 0 mm (mV) | ΔV em 50 mm (mV) |",
-        "| --- | ---: | ---: | ---: | ---: |",
+        "Estimativa condicional: `B_estimado (mT) = ΔV (mV) / 14`, usando a referência sem ímã "
+        "do mesmo lado. O experimentador identificou o sensor como Honeywell "
+        "SS49E do kit Elegoo de 37 sensores. **14 mV/mT é a sensibilidade típica "
+        "do fabricante (1,4 mV/G a 25 °C); a unidade não foi calibrada "
+        "individualmente.** O sinal do campo estimado segue o sinal elétrico de ΔV; "
+        "seu sentido físico depende do eixo e da resposta real do Hall. "
+        "[Ficha técnica Honeywell](https://prod-edam.honeywell.com/content/dam/honeywell-edam/sps/siot/en-us/products/sensors/magnetic-sensors/linear-and-angle-sensor-ics/common/documents/sps-siot-ss39et-ss49e-ss59et-product-sheet-005850-3-en-ciid-50359.pdf).", "",
+        "| Lado | Referência sem ímã (V) | n referência | ΔV medido em 0 mm nominal (mV) | Campo estimado em 0 mm nominal (mT; SS49E típico, não calibrado) | ΔV medido em 50 mm (mV) |",
+        "| --- | ---: | ---: | ---: | ---: | ---: |",
     ]
     for side in SIDES:
         reference, count = references[side]
         lines.append(f"| {side} | {reference:.6f} | {count} | "
-                     f"{by_key[(side, 0)].delta_v_mv:+.3f} | {by_key[(side, 50)].delta_v_mv:+.3f} |")
+                     f"{by_key[(side, 0)].delta_v_mv:+.3f} | "
+                     f"{estimated_field_mt(by_key[(side, 0)].delta_v_mv):+.3f} | "
+                     f"{by_key[(side, 50)].delta_v_mv:+.3f} |")
     lines += [
         "",
         "As curvas mostram **tensões medidas**, inclusive em 0 mm nominal; 0 mm não é "
@@ -226,12 +242,15 @@ def write_outputs(
         "conforme suas notas; portanto, não representa o fluxo integral do instrumento.",
         "",
         "ΔV = média de tensão com ímã − referência sem ímã do mesmo lado. "
-        "Sem sensibilidade e eixo sensível calibrados, ΔV não é convertido em mT. "
-        "Nenhuma magnetização foi ajustada a estes dados.",
+        "O campo em mT é apenas uma estimativa sob a sensibilidade típica assumida; "
+        "não é campo medido por instrumento calibrado. Nenhuma magnetização foi "
+        "ajustada a estes dados.",
         "",
         "Os 16 grupos e todas as contagens, médias e diferenças estão na "
         "[tabela de médias](medias-por-distancia.csv). Veja as curvas de "
-        "[tensão](tensao-distancia.png) e [ΔV](delta-v-distancia.png).",
+        "[tensão](tensao-distancia.png) e [ΔV](delta-v-distancia.png), mantidas em volts "
+        "e milivolts. A [comparação da estimativa de campo com o modelo horizontal]"
+        "(comparacao-campo-estimado-horizontal.md) é calculada separadamente.",
         "",
         "Para reproduzir, na raiz do repositório, execute "
         "`.\\.venv\\Scripts\\python.exe simulation/magnetic-field/src/hall_analysis.py` "

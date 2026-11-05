@@ -18,12 +18,13 @@ import numpy as np
 import scipy
 from scipy.spatial.transform import Rotation
 
-from hall_analysis import OUTPUT, ROOT, SOURCE, Result, _workbook_sheets, calculate, load_readings, verify_comparison
+from hall_analysis import (FIELD_COLUMN, OUTPUT, ROOT, SOURCE, Result, _workbook_sheets,
+                           calculate, estimated_field_mt, load_readings, verify_comparison)
 from magnet_geometry import build_hall_setup, dimensions_for
 
 
 SIDES = ("Lado 1", "Lado 2")
-# O eixo sensível real do AH49E não está identificado pelo registro da montagem.
+# O eixo sensível real do SS49E não está identificado pelo registro da montagem.
 # Vetores nos eixos LOCAIS do sensor cuja normal aponta para +X global.
 AXES_LOCAL = {
     "normal_x": (0.0, 0.0, 1.0),   # +X global: direção de aproximação
@@ -192,12 +193,13 @@ def write_results(source: Path, output: Path, rows: list[Row], fits: dict[str, F
         writer = csv.writer(stream)
         writer.writerow(("lado", "distancia_nominal_mm", "n", "usado_no_ajuste",
                          "delta_v_observado_v", *(f"{axis}_previsto_v" for axis in AXES_LOCAL),
-                         *(f"{axis}_residuo_v" for axis in AXES_LOCAL)))
+                         *(f"{axis}_residuo_v" for axis in AXES_LOCAL), FIELD_COLUMN))
         for r in rows:
             writer.writerow((r.side, r.distance_mm, r.count, "sim" if r.used_for_fit else "nao",
                              f"{r.observed_v:.9f}",
                              *(f"{r.predictions_v[axis]:.9f}" for axis in AXES_LOCAL),
-                             *(f"{r.residuals_v[axis]:.9f}" for axis in AXES_LOCAL)))
+                             *(f"{r.residuals_v[axis]:.9f}" for axis in AXES_LOCAL),
+                             f"{estimated_field_mt(r.observed_v * 1000):.9f}"))
     plot_fit(rows, fits, output / f"{STEM}.png")
     plot_zero(rows, output / f"{STEM}-zero.png")
     try:
@@ -215,8 +217,11 @@ def write_results(source: Path, output: Path, rows: list[Row], fits: dict[str, F
         "ímã; aproximação horizontal; para o lado 2, a mesma peça foi virada "
         "para que a face antes apoiada ficasse para cima. Não há fotografia "
         "incorporada neste repositório; a geometria abaixo usa essa descrição. "
-        "A identificação ‘lado 1 = Sul; lado 2 = Norte’ é provisória, dependente "
-        "da resposta do AH49E e da orientação da face marcada, não uma medida de polos.", "",
+        "O experimentador identificou o sensor como Honeywell SS49E do kit "
+        "Elegoo de 37 sensores. ‘Lado 1 = Sul; lado 2 = Norte’ é a atribuição "
+        "adotada para esta análise segundo a convenção da ficha Honeywell, "
+        "considerando a face sensível voltada para o ímã; não houve verificação "
+        "independente dos polos.", "",
         "**Hipóteses de cálculo:** comprimento local X → +Y global, largura local Y "
         "→ −X global, espessura local Z → +Z global no lado 1. O lado 2 é uma "
         "rotação rígida de 180° em torno do comprimento local X (global Y): "
@@ -243,7 +248,7 @@ def write_results(source: Path, output: Path, rows: list[Row], fits: dict[str, F
         "plano x do Hall no modelo, sem afirmar contato físico no ensaio.", "",
         "**Projeções candidatas do campo:** `normal_x` (+X global, normal da "
         "frente do módulo), `vertical_z` (+Z global) e `longitudinal_y` (+Y "
-        "global). O eixo sensível e o sinal de resposta reais do AH49E não foram "
+        "global). O eixo sensível e o sinal de resposta reais do SS49E não foram "
         "extraídos da montagem; cada projeção é uma hipótese separada.", "",
         f"Fonte: `{label}` (SHA-256 `{hashlib.sha256(source.read_bytes()).hexdigest()}`). "
         "As 904 leituras foram agregadas por lado e distância e conferidas "
@@ -265,10 +270,16 @@ def write_results(source: Path, output: Path, rows: list[Row], fits: dict[str, F
     lines += ["", "O sinal da escala ajustada depende da escolha arbitrária de +Z "
               "local para a polarização de referência e do sentido positivo "
               "escolhido para a projeção. Escala negativa não identifica um "
-              "polo magnético nem o sinal físico do AH49E.", "",
-              "## Observação, previsão e resíduo (V)", "",
+              "polo magnético nem o sinal físico do SS49E.", "",
+        "## Observação, previsão e resíduo (V)", "",
               f"[Gráfico de 5–50 mm]({STEM}.png) · [CSV com todas as projeções]({STEM}.csv). "
-              "Resíduo = ΔV observado − previsto.", "",
+              "Resíduo = ΔV observado − previsto. O CSV também traz campo estimado "
+              "em mT por ΔV (mV)/14: **14 mV/mT é sensibilidade típica assumida do "
+              "SS49E Honeywell identificado pelo experimentador, sem calibração "
+              "individual da unidade**. "
+              "Veja a [comparação condicional com a componente Magpylib]"
+              "(comparacao-campo-estimado-horizontal.md); os gráficos abaixo "
+              "permanecem em volts.", "",
               "| Lado | d (mm) | ΔV obs. | X previsto | X res. | Z previsto | Z res. | Y previsto | Y res. |",
               "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |"]
     for r in rows:
@@ -296,8 +307,9 @@ def write_results(source: Path, output: Path, rows: list[Row], fits: dict[str, F
               "Os resíduos comparam formas de curva **dentro das hipóteses** de "
               "altura, alinhamento e projeção. Um erro menor não identifica "
               "o eixo sensível, a magnetização ou um polo real: outras alturas, "
-              "orientações e deslocamentos podem alterar as curvas. ΔV não foi "
-              "convertido para mT. A direção/sinal de magnetização, o eixo e "
+              "orientações e deslocamentos podem alterar as curvas. A conversão "
+              "adicional para mT usa somente a hipótese típica de 14 mV/mT; "
+              "não é um campo calibrado. A direção/sinal de magnetização, o eixo e "
               "sinal de resposta do Hall, a altura do elemento sensível e o "
               "zero geométrico permanecem pendentes.", "",
               "Os ajustes desta página usam exclusivamente a trajetória "
