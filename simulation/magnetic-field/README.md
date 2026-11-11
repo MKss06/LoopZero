@@ -92,6 +92,16 @@ Para comparar a grade, o script **reutiliza** o cenário horizontal e a escala e
 .\.venv\Scripts\python.exe simulation/magnetic-field/src/hall_grid_revised_scale_exploration.py
 ```
 
+## Nova coleta com cinco ímãs
+
+`src/hall_five_magnets.py` confere as [30 médias e fórmulas da nova planilha](../../data/experiments/hall-sensor/mapeamento_cinco_imans.xlsx) e gera [relatório, CSV, mapas e curvas](../../data/processed/hall-sensor/mapeamento-cinco-imans-horizontal.md). A foto mostra o Hall fixo perto de X=0, cinco peças em sequência no eixo X e os deslocamentos Y laterais. O código já representa essa disposição: comprimentos em Y, centros separados pelas larguras médias em X e aproximação em −X. Os cuboides médios ficam com **separação entre faces zero**, como confirmado pelo experimentador, e mantêm a mesma polarização local provisória. As larguras individuais, a distância ao elemento sensível, o eixo sensível e os polos de cada peça não são conhecidos. A escala elétrica fixa `−12,320751 V/T`, o eixo candidato `vertical_z` (+Z global), a altura relativa e o zero nominal do modelo anterior são reutilizados, sem ajuste a esta coleta. No cenário, essa escala negativa transforma a componente modelada negativa do lado 1 em aumento de tensão e a positiva do lado 2 em diminuição; não estabelece a orientação sensível física do SS49E.
+
+A referência sem ímã caiu de 535,662921 para 533 ADC. Como não há horário por posição e uma linha do bloco final foi inferida na fonte, o script mostra ΔV sob ambas as referências e uma referência intermediária apenas ilustrativa. Esta coleta não recebe conversão para mT.
+
+```powershell
+.\.venv\Scripts\python.exe simulation/magnetic-field/src/hall_five_magnets.py
+```
+
 Veja o [mapa, as curvas, a grade e os resíduos](../../data/processed/hall-sensor/sensibilidade-geometrica-horizontal.md). O código rejeita deslocamento negativo e confere que o ponto Hall não fique dentro do cuboide. Várias combinações produzem erros próximos; a grade não mede altura nem identifica o zero físico.
 
 ```powershell
@@ -103,3 +113,5 @@ Execute as verificações a partir da raiz do repositório:
 ```powershell
 .\.venv\Scripts\python.exe -m unittest discover -s simulation/magnetic-field/tests -v
 ```
+
+`src/compare_single_five_grid.py` gera a [comparação direta das grades de um e cinco ímãs](../../data/processed/hall-sensor/comparacao-grade-um-cinco-imans.md). Lê a planilha revisada com o reteste X=5 mm e a coleta da fileira, cruza as 30 coordenadas, mantém as referências separadas e aplica a mesma escala fixa do modelo horizontal às duas configurações. Exporta tabela e mapas medidos, calculados e de resíduos sem reajustar parâmetros. A razão entre respostas só aparece quando o ΔV do ímã único supera duas vezes a maior deriva registrada nas referências das duas coletas; esse limite é descritivo, não estatístico.

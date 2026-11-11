@@ -14,6 +14,8 @@ O [reteste vigente de X=5 mm](processed/hall-sensor/mapeamento-hall-x5-revisado.
 
 A [escala comum exploratória da grade vigente](processed/hall-sensor/mapeamento-hall-x5-escala-exploratoria.md) é ajustada somente às 30 posições revisadas. O relatório apresenta métricas e resíduos da escala fixa e da ajustada nos mesmos pontos; não constitui validação independente.
 
+A [nova coleta com cinco ímãs em fileira](processed/hall-sensor/mapeamento-cinco-imans-horizontal.md) usa outra [planilha original preservada](experiments/hall-sensor/mapeamento_cinco_imans.xlsx). As 30 médias e fórmulas são conferidas separadamente. A comparação em volts usa as referências sem ímã de início e fim como cenários de deriva; não reajusta a escala ou a geometria para reproduzir os dados.
+
 A [comparação com aproximação horizontal](processed/hall-sensor/comparacao-horizontal.md) usa o Hall fixo e a virada rígida do mesmo ímã. A tabela experimental preserva as tensões **medidas**, inclusive em 0 mm nominal; as tabelas do modelo rotulam separadamente as tensões **calculadas**. Os parâmetros ajustados não substituem medições físicas de magnetização ou calibração do Hall.
 
 A [comparação em campo estimado](processed/hall-sensor/comparacao-campo-estimado-horizontal.md) apresenta `ΔV (mV)/14` ao lado da componente calculada pelo Magpylib. O experimentador identificou o sensor como Honeywell SS49E do kit Elegoo de 37 sensores. Os **14 mV/mT** são a sensibilidade típica do fabricante; a unidade não foi calibrada individualmente. As tensões e curvas originais continuam disponíveis no [relatório consolidado](processed/hall-sensor/relatorio-consolidado.md).
@@ -21,3 +23,5 @@ A [comparação em campo estimado](processed/hall-sensor/comparacao-campo-estima
 A [análise de sensibilidade geométrica](processed/hall-sensor/sensibilidade-geometrica-horizontal.md) explora altura relativa e deslocamento do zero, preservando 0 mm fora do ajuste. Os limites da grade são cenários de cálculo, não medidas da montagem.
 
 Use nomes descritivos, por exemplo `aaaa-mm-dd_id-experimento_tipo.csv`, e acompanhe cada conjunto com documentação de origem, unidades, instrumento, condições, incertezas e procedimento. Evite dados pessoais e credenciais.
+
+A [comparação direta das grades vigentes de um e cinco ímãs](processed/hall-sensor/comparacao-grade-um-cinco-imans.md) cruza os 30 pontos por lado/X/Y, usa o reteste válido de X=5 mm e mantém separadas as referências das duas coletas. Tabela, mapas e resíduos ficam em volts, sem novo ajuste ou campo Hall calibrado.

@@ -60,3 +60,7 @@ Uma [análise exploratória dos resíduos da grade](data/processed/hall-sensor/m
 O [reteste vigente de X=5 mm](data/processed/hall-sensor/mapeamento-hall-x5-revisado.md) substitui seis médias da grade anterior. As duas planilhas originais e os resultados anteriores permanecem como histórico. A nova comparação transporta as escalas já publicadas, sem ajustar a geometria ou a orientação.
 
 A [nova análise exploratória da escala comum](data/processed/hall-sensor/mapeamento-hall-x5-escala-exploratoria.md) usa as 30 médias vigentes e compara o ajuste multiplicativo com a escala fixa, em volts. Seu erro é calculado nos próprios pontos do ajuste.
+
+Uma [coleta adicional com cinco ímãs lado a lado](data/processed/hall-sensor/mapeamento-cinco-imans-horizontal.md) foi incorporada sem alterar as anteriores. Ela contém 30 médias ADC; o relatório compara um cenário Magpylib explícito em volts e trata a mudança da referência sem ímã como deriva possível, sem novo ajuste nem conversão para mT.
+
+A [comparação direta das grades de um e cinco ímãs](data/processed/hall-sensor/comparacao-grade-um-cinco-imans.md) usa o reteste vigente de X=5 mm, cruza 30 posições por lado/X/Y e mostra diferenças medidas, previsões Magpylib e resíduos com referências separadas.
